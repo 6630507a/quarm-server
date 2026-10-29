@@ -23,6 +23,7 @@ class ClientList {
 public:
 	ClientList();
 	~ClientList();
+	void Shutdown();
 
 	void Process();
 

@@ -648,6 +648,7 @@ int main(int argc, char** argv) {
 		LogInfo("Received signal [{}]", (int) pending_shutdown_signal);
 	}
 	LogInfo("World main loop completed.");
+	client_list.Shutdown();
 	LogInfo("Shutting down zone connections (if any).");
 	zoneserver_list.KillAll();
 	LogInfo("Zone (TCP) listener stopped.");

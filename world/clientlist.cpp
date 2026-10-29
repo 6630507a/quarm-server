@@ -52,6 +52,15 @@ ClientList::ClientList()
 }
 
 ClientList::~ClientList() {
+	Shutdown();
+}
+
+void ClientList::Shutdown() {
+	// Client and CLE destructors still use database, zone, login and logging
+	// globals. Drain them explicitly before those dependencies are destroyed.
+	m_tick.reset();
+	list.Clear();
+	clientlist.Clear();
 }
 
 void ClientList::Process() {

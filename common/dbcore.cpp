@@ -122,6 +122,19 @@ MySQLRequestResult DBcore::QueryDatabase(const char* query, uint32 querylen, boo
 		 */
 		if (mysql_errno(&mysql) > 0 && query[0] != '\0'){
 			LogMySQLError("MySQL Error ({}) [query values redacted]", mysql_errno(&mysql));
+			if (mysql_errno(&mysql) == 1146) {
+				// Structural diagnostics are useful without exposing SQL values.
+				// Never log a server error string containing arbitrary query data.
+				std::string message = mysql_error(&mysql);
+				auto begin = message.find('\'');
+				auto end = begin == std::string::npos ? begin : message.find('\'', begin + 1);
+				if (begin != std::string::npos && end != std::string::npos) {
+					auto name = message.substr(begin + 1, end - begin - 1);
+					if (!name.empty() && name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.") == std::string::npos) {
+						LogMySQLError("Missing schema table [{}]", name);
+					}
+				}
+			}
 		}
 
 		return MySQLRequestResult(nullptr, 0, 0, 0, 0, mysql_errno(&mysql),errorBuffer);
