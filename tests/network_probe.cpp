@@ -5,6 +5,8 @@
 #include "../common/net/tcp_server.h"
 #include "../common/path_manager.h"
 #include "../common/platform.h"
+#include "../common/memory_mapped_file.h"
+#include <cstring>
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -36,7 +38,16 @@ int main(int argc, char **argv) {
     LogSys.LoadLogSettingsDefaults();
     const int port = std::stoi(argv[3]);
     try {
-        if (std::string(argv[1]) == "tcp") {
+        if (std::string(argv[1]) == "mmf") {
+            {
+                EQ::MemoryMappedFile file(argv[2], 512);
+                file.ZeroFile();
+                std::memcpy(file.Get(), "mapping-sentinel", 17);
+            }
+            EQ::MemoryMappedFile reopened(argv[2]);
+            if (reopened.Size() != 512 || std::memcmp(reopened.Get(), "mapping-sentinel", 17)) return 3;
+            std::cout << "MAPPING_VERIFIED" << std::endl;
+        } else if (std::string(argv[1]) == "tcp") {
             EQ::Net::TCPServer server;
             server.Listen(argv[2], port, false, [](auto) {});
             std::cout << "READY" << std::endl;

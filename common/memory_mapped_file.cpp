@@ -69,7 +69,8 @@ namespace EQ {
 			PAGE_READWRITE,
 			0,
 			total_size,
-			filename.c_str());
+			nullptr); // File-backed views share the file; paths are invalid object names on Windows.
+		CloseHandle(file);
 
 		if(!imp_->mapped_object_) {
 			EQ_EXCEPT("Shared Memory", "Could not create a file mapping for this shared memory file.");
@@ -138,7 +139,8 @@ namespace EQ {
 			PAGE_READWRITE,
 			0,
 			total_size,
-			filename.c_str());
+			nullptr);
+		CloseHandle(file);
 
 		if(!imp_->mapped_object_) {
 			EQ_EXCEPT("Shared Memory", "Could not create a file mapping for this shared memory file.");
@@ -176,6 +178,9 @@ namespace EQ {
 
 	MemoryMappedFile::~MemoryMappedFile() {
 #ifdef _WINDOWS
+		if(memory_) {
+			UnmapViewOfFile(memory_);
+		}
 		if(imp_->mapped_object_) {
 			CloseHandle(imp_->mapped_object_);
 		}
