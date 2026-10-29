@@ -303,7 +303,13 @@ int main(int argc, char** argv) {
 	server_opts.port        = Config->WorldTCPPort;
 	server_opts.ipv6        = false;
 	server_opts.credentials = Config->SharedKey;
-	server_connection->Listen(server_opts);
+	server_opts.bind_address = Config->InternalBindAddress;
+	try {
+		server_connection->Listen(server_opts);
+	} catch (const std::exception &error) {
+		LogError("Internal listener startup failed: {}", error.what());
+		return 1;
+	}
 	LogInfo("Server (TCP) listener started on port [{}]", Config->WorldTCPPort);
 		
 	server_connection->OnConnectionIdentified(
@@ -445,7 +451,7 @@ int main(int argc, char** argv) {
 
 	WorldBoot::CheckForPossibleConfigurationIssues();
 
-	if (eqsf.Open()) {
+	if (eqsf.Open(9000, Config->ClientBindAddress)) {
 		LogInfo("Client (UDP) listener started.");
 	} else {
 		LogInfo("Failed to start client (UDP) listener (port 9000)");

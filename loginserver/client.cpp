@@ -48,7 +48,7 @@ bool Client::Process()
 			OpcodeManager::EmuToName(app->GetOpcode()),
 			m_connection->GetOpcodeManager()->EmuToEQ(app->GetOpcode()),
 			app->Size(),
-			(LogSys.IsLogEnabled(Logs::Detail, Logs::PacketClientServer) ? DumpPacketToString(app) : "")
+			"[authentication payload redacted]"
 		);
 
 		switch(app->GetOpcode()) {
@@ -284,7 +284,6 @@ void Client::Handle_Login(const char* data, unsigned int size, std::string clien
 		}
 		else {
 			LogInfo("badpassword");
-			LogError("[{0}]", sha1hash);
 			result = false;
 		}
 	}

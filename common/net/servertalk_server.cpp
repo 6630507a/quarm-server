@@ -12,7 +12,8 @@ void EQ::Net::ServertalkServer::Listen(const ServertalkServerOptions& opts)
 {
 	m_credentials = opts.credentials;
 	m_server = std::make_unique<EQ::Net::TCPServer>();
-	m_server->Listen(opts.port, opts.ipv6, [this](std::shared_ptr<EQ::Net::TCPConnection> connection) {
+	const std::string address = opts.bind_address.empty() ? (opts.ipv6 ? "::" : "0.0.0.0") : opts.bind_address;
+	m_server->Listen(address, opts.port, opts.ipv6, [this](std::shared_ptr<EQ::Net::TCPConnection> connection) {
 		m_unident_connections.push_back(std::make_shared<ServertalkServerConnection>(connection, this));
 	});
 }

@@ -14,6 +14,7 @@ namespace EQ
 			int port;
 			bool ipv6;
 			std::string credentials;
+			std::string bind_address;
 
 			ServertalkServerOptions() {
 				ipv6 = false;

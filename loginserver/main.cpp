@@ -138,7 +138,7 @@ int main()
 	//create our server manager.
 	LogInfo("Server Manager Initialize.");
 	server.server_manager = new ServerManager();
-	if (!server.server_manager) {
+	if (!server.server_manager || !run_server) {
 		//We can't run without a server manager, cleanup and exit.
 		LogError("Server Manager Failed to Start.");
 
@@ -154,7 +154,7 @@ int main()
 	//create our client manager.
 	LogInfo("Client Manager Initialize.");
 	server.client_manager = new ClientManager();
-	if (!server.client_manager) {
+	if (!server.client_manager || !run_server) {
 		//We can't run without a client manager, cleanup and exit.
 		LogError("Client Manager Failed to Start.");
 		LogInfo("Server Manager Shutdown.");

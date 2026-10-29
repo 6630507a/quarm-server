@@ -31,6 +31,8 @@ std::string EQEmuConfig::ConfigFile = "eqemu_config.json";
 EQEmuConfig *EQEmuConfig::_config = nullptr;
 
 void EQEmuConfig::parse_config() {
+	ClientBindAddress = _root["server"]["network"].get("client_bind_address", "127.0.0.1").asString();
+	InternalBindAddress = _root["server"]["network"].get("internal_bind_address", "127.0.0.1").asString();
 	ShortName = _root["server"]["world"].get("shortname", "").asString();
 	LongName = _root["server"]["world"].get("longname", "").asString();
 	WorldAddress = _root["server"]["world"].get("address", "").asString();

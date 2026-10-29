@@ -52,7 +52,7 @@ ClientManager::ClientManager()
 			server.config.GetVariableString("Old", "opcodes", "login_opcodes_oldver.conf"));
 		run_server = false;
 	}
-	else if (old_stream->Open()) {
+	else if (old_stream->Open(old_port, server.config.GetVariableString("client_configuration", "bind_address", "127.0.0.1"))) {
 		LogInfo("ClientManager listening on Old stream.");
 	}
 	else {

@@ -103,7 +103,9 @@ bool EQStreamFactory::Open()
 	memset((char *)&address, 0, sizeof(address));
 	address.sin_family = AF_INET;
 	address.sin_port = htons(Port);
-	address.sin_addr.s_addr = htonl(INADDR_ANY);
+	if (inet_pton(AF_INET, BindAddress.c_str(), &address.sin_addr) != 1) {
+		return false;
+	}
 
 	/* Setting up UDP port for new clients */
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -112,7 +114,11 @@ bool EQStreamFactory::Open()
 	}
 
 	if (bind(sock, (struct sockaddr *) &address, sizeof(address)) < 0) {
+		#ifdef _WINDOWS
+		closesocket(sock);
+		#else
 		close(sock);
+		#endif
 		sock = -1;
 		return false;
 	}

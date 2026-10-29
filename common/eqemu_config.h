@@ -53,6 +53,8 @@ class EQEmuConfig
 		bool Locked;
 		uint16 WorldTCPPort;
 		std::string WorldIP;
+		std::string ClientBindAddress;
+		std::string InternalBindAddress;
 		uint16 TelnetTCPPort;
 		std::string TelnetIP;
 		bool TelnetEnabled;

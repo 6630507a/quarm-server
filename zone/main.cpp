@@ -455,14 +455,14 @@ int main(int argc, char** argv) {
 			*/
 			if (!websocker_server_opened && Config->ZonePort != 0) {
 				LogInfo("Websocket Server listener started on address [{}] port [{}]", Config->TelnetIP.c_str(), Config->ZonePort);
-				ws_server = std::make_unique<EQ::Net::WebsocketServer>(Config->TelnetIP, Config->ZonePort);
+				ws_server = std::make_unique<EQ::Net::WebsocketServer>(Config->InternalBindAddress, Config->ZonePort);
 				RegisterApiService(ws_server);
 				websocker_server_opened = true;
 			}
 
 			if (!eqsf.IsOpen() && Config->ZonePort != 0) {
 				LogInfo("Starting EQ Network server on port {} ", Config->ZonePort);
-				if (!eqsf.Open(Config->ZonePort)) {
+				if (!eqsf.Open(Config->ZonePort, Config->ClientBindAddress)) {
 					LogError("Failed to open port {} ", Config->ZonePort);
 					ZoneConfig::SetZonePort(0);
 					worldwasconnected = false;

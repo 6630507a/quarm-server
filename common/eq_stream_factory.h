@@ -58,11 +58,12 @@ class EQStreamFactory : private Timeoutable {
 	private:
 		int sock;
 		int Port;
+		std::string BindAddress = "0.0.0.0";
 
-		bool ReaderRunning;
+		bool ReaderRunning = false;
 		std::mutex MReaderRunning;
-		bool WriterRunningNew;
-		bool WriterRunningOld;
+		bool WriterRunningNew = false;
+		bool WriterRunningOld = false;
 		std::mutex MWriterRunningNew;
 		std::mutex MWriterRunningOld;
 
@@ -105,6 +106,7 @@ class EQStreamFactory : private Timeoutable {
 
 		bool Open();
 		bool Open(unsigned long port) { Port=port; return Open(); }
+		bool Open(unsigned long port, const std::string &address) { Port=port; BindAddress=address; return Open(); }
 		bool IsOpen() { return sock!=-1; }
 		void Close();
 		void ReaderLoop();

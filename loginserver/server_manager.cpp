@@ -35,7 +35,14 @@ ServerManager::ServerManager()
 	EQ::Net::ServertalkServerOptions opts;
 	opts.port = listen_port;
 	opts.ipv6 = false;
-	m_server_connection->Listen(opts);
+	opts.bind_address = server.config.GetVariableString("client_configuration", "internal_bind_address", "127.0.0.1");
+	try {
+		m_server_connection->Listen(opts);
+	} catch (const std::exception &error) {
+		LogError("Internal listener startup failed: {}", error.what());
+		run_server = false;
+		return;
+	}
 
 	LogInfo("Loginserver now listening on port [{0}]", listen_port);
 
