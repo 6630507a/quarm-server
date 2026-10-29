@@ -1,3 +1,4 @@
+#include "../common/global_define.h"
 #include "zone_cli.h"
 #include "../common/cli/eqemu_command_handler.h"
 #include <string.h>
