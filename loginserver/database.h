@@ -99,7 +99,7 @@ public:
 	bool CheckExtraSettings(std::string type);
 protected:
 	std::string user, pass, host, port, name;
-	MYSQL *m_database;
+	MYSQL *m_database = nullptr;
 };
 
 #endif

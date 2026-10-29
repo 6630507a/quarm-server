@@ -23,6 +23,7 @@
 #include "../common/memory_mapped_file.h"
 #include "../common/eqemu_exception.h"
 #include "../common/spdat.h"
+#include <filesystem>
 
 void LoadSpells(SharedDatabase *database, const std::string &prefix) {
 	EQ::IPCMutex mutex("spells");
@@ -35,7 +36,7 @@ void LoadSpells(SharedDatabase *database, const std::string &prefix) {
 	uint32 size = records * sizeof(SPDat_Spell_Struct) + sizeof(uint32);
 
 	auto Config = EQEmuConfig::get();
-	std::string file_name = Config->SharedMemDir + prefix + std::string("spells");
+	std::string file_name = (std::filesystem::path(Config->SharedMemDir) / (prefix + "spells")).string();
 	EQ::MemoryMappedFile mmf(file_name, size);
 	mmf.ZeroFile();
 

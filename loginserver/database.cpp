@@ -47,17 +47,13 @@ Database::Database(std::string user, std::string pass, std::string host, std::st
 		exit(1);
 	}
 	else {
-		Log(Logs::General, Logs::Status, "Using database '%s' at %s:%d", m_database, host, port);
+		LogInfo("Using login database [{}] at [{}]:[{}]", name, host, port);
 	}
 }
 
-Database::~Database()
-{
-	if(m_database)
-	{
-		mysql_close(m_database);
-	}
-}
+// DBcore owns and closes the MYSQL handle. The legacy m_database pointer was
+// never initialized by this constructor and must not be closed here.
+Database::~Database() = default;
 
 bool Database::GetLoginDataFromAccountName(std::string &name, std::string &password, unsigned int &id)
 {

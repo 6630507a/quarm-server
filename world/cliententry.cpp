@@ -373,18 +373,14 @@ bool ClientListEntry::CheckStale()
 bool ClientListEntry::CheckAuth(uint32 loginserver_account_id, const char* key_password)
 {
 	LogDebug(
-		"ls_account_id [{0}] key_password [{1}] plskey [{2}]",
-		loginserver_account_id,
-		key_password,
-		plskey
+		"ls_account_id [{0}] [authentication values redacted]",
+		loginserver_account_id
 	);
 
 	if (pLSID == loginserver_account_id && strncmp(plskey, key_password, 10) == 0) {
 		LogDebug(
-			"ls_account_id [{0}] key_password [{1}] plskey [{2}] lsid [{3}] paccountid [{4}]",
+			"ls_account_id [{0}] lsid [{1}] paccountid [{2}] [authentication values redacted]",
 			loginserver_account_id,
-			key_password,
-			plskey,
 			LSID(),
 			paccountid
 		);
