@@ -38,7 +38,28 @@ int main(int argc, char **argv) {
     LogSys.LoadLogSettingsDefaults();
     const int port = std::stoi(argv[3]);
     try {
-        if (std::string(argv[1]) == "mmf") {
+        if (std::string(argv[1]) == "tcp-retry") {
+            EQ::Net::TCPServer server;
+            bool rejected=false;
+            try { server.Listen("192.0.2.123",port,false,[](auto){}); }
+            catch(const std::exception&) { rejected=true; }
+            if(!rejected) return 4;
+            EQ::EventLoop::Get().Process();
+            for(int i=0;i<3;++i) {
+                server.Listen(argv[2],port,false,[](auto){});
+                server.Close();
+                EQ::EventLoop::Get().Process();
+            }
+            std::cout<<"RETRY_VERIFIED"<<std::endl;
+        } else if (std::string(argv[1]) == "udp-retry") {
+            EQStreamFactory server(OldStream,port);
+            if(open_udp(server,port,"192.0.2.123")) return 4;
+            for(int i=0;i<3;++i) {
+                if(!open_udp(server,port,argv[2])) return 5;
+                server.Close();
+            }
+            std::cout<<"RETRY_VERIFIED"<<std::endl;
+        } else if (std::string(argv[1]) == "mmf") {
             {
                 EQ::MemoryMappedFile file(argv[2], 512);
                 file.ZeroFile();
