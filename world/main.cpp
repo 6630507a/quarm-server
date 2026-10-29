@@ -21,6 +21,7 @@
 #define PLATFORM_WORLD 1
 
 #include "../common/global_define.h"
+#include "../common/local_shutdown.h"
 
 #include <iostream>
 #include <string.h>
@@ -475,6 +476,9 @@ int main(int argc, char** argv) {
 	auto loop_fn = [&](EQ::Timer* t) {
 		Timer::SetCurrentTime();
 
+		if (LocalShutdownRequested()) {
+			RunLoops = false;
+		}
 		if (!RunLoops) {
 			EQ::EventLoop::Get().Shutdown();
 			return;

@@ -159,7 +159,7 @@ void WorldServer::ProcessUsertoWorldResp(uint16_t opcode, const EQ::Net::Packet&
 		per->Sequence = c->GetPlaySequence();
 		per->ServerNumber = c->GetPlayServerID();
 		LogInfo("Found sequence and play of [{0}] [{1}]", c->GetPlaySequence(), c->GetPlayServerID());
-		LogDebug("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
+		LogDebug("[Size: {0}] [authentication payload redacted]", outapp->size);
 
 		in_addr in{};
 		in.s_addr = c->GetConnection()->GetRemoteIP();
@@ -500,7 +500,7 @@ void WorldServer::SendClientAuth(std::string ip, std::string account, std::strin
 	LogNetcode(
 		"[Size: [{}] [{}]", 
 		outapp->size, 
-		DumpServerPacketToString(outapp)
+		"[authentication payload redacted]"
 	);
 
 	safe_delete(outapp);

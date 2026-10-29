@@ -16,6 +16,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 #include "../common/global_define.h"
+#include "../common/local_shutdown.h"
 #include "../common/types.h"
 #include "../common/opcodemgr.h"
 #include "../common/eq_stream_factory.h"
@@ -182,6 +183,9 @@ int main()
 	auto loop_fun = [&](EQ::Timer* t) {
 		Timer::SetCurrentTime();
 		
+		if (LocalShutdownRequested()) {
+			run_server = false;
+		}
 		if (!run_server) {
 			EQ::EventLoop::Get().Shutdown();
 			return;

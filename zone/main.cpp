@@ -20,6 +20,7 @@
 #define PLATFORM_ZONE 1
 
 #include "../common/global_define.h"
+#include "../common/local_shutdown.h"
 #include "../common/features.h"
 #include "../common/queue.h"
 #include "../common/eq_stream.h"
@@ -435,6 +436,9 @@ int main(int argc, char** argv) {
 			//Advance the timer to our current point in time
 			Timer::SetCurrentTime();
 
+			if (LocalShutdownRequested()) {
+				pending_shutdown_signal = SIGTERM;
+			}
 			if (pending_shutdown_signal) {
 				LogInfo("Received signal [{}]; saving clients and shutting down", (int) pending_shutdown_signal);
 				pending_shutdown_signal = 0;
@@ -453,25 +457,23 @@ int main(int argc, char** argv) {
 			/**
 			* Websocket server
 			*/
-			if (!websocker_server_opened && Config->ZonePort != 0) {
-				LogInfo("Websocket Server listener started on address [{}] port [{}]", Config->TelnetIP.c_str(), Config->ZonePort);
-				ws_server = std::make_unique<EQ::Net::WebsocketServer>(Config->InternalBindAddress, Config->ZonePort);
-				RegisterApiService(ws_server);
-				websocker_server_opened = true;
-			}
-
-			if (!eqsf.IsOpen() && Config->ZonePort != 0) {
-				LogInfo("Starting EQ Network server on port {} ", Config->ZonePort);
-				if (!eqsf.Open(Config->ZonePort, Config->ClientBindAddress)) {
-					LogError("Failed to open port {} ", Config->ZonePort);
-					ZoneConfig::SetZonePort(0);
-					worldwasconnected = false;
-					// Ask world for a different port now. Otherwise a zone already connected to world
-					// stays registered on a port it never bound and players are sent to whoever owns it.
-					if (worldserver.Connected()) {
-						worldserver.SendConnectInfo();
+			try {
+				if (!eqsf.IsOpen() && Config->ZonePort != 0) {
+					if (!eqsf.Open(Config->ZonePort, Config->ClientBindAddress)) {
+						throw std::runtime_error("Zone UDP listener failed");
 					}
 				}
+				if (!websocker_server_opened && Config->ZonePort != 0) {
+					ws_server = std::make_unique<EQ::Net::WebsocketServer>(Config->InternalBindAddress, Config->ZonePort);
+					RegisterApiService(ws_server);
+					websocker_server_opened = true;
+					LogInfo("Zone listeners started on client [{}] internal [{}] port [{}]", Config->ClientBindAddress, Config->InternalBindAddress, Config->ZonePort);
+				}
+			} catch (const std::exception &error) {
+				LogError("Zone listener startup failed: {}; saving clients and shutting down", error.what());
+				entity_list.Save();
+				Shutdown();
+				return;
 			}
 
 			//check the factory for any new incoming streams.

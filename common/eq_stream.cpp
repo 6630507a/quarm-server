@@ -662,7 +662,7 @@ void EQStream::SendPacket(uint16 opcode, EQApplicationPacket *p)
 
 	if (LogSys.log_settings[Logs::PacketServerClient].is_category_enabled == 1){
 		if (p->GetOpcode() != OP_SpecialMesg){
-			LogPacketServerClient("[{}] - [{:#06x}] Size: [{}] [{}]", OpcodeManager::EmuToName(p->GetOpcode()), p->GetOpcode(), p->Size(), DumpPacketToString(p).c_str());
+			LogPacketServerClient("[{}] - [{:#06x}] Size: [{}] [payload redacted]", OpcodeManager::EmuToName(p->GetOpcode()), p->GetOpcode(), p->Size());
 		}
 	}
 
@@ -2404,7 +2404,7 @@ void EQOldStream::MakeEQPacket(EQProtocolPacket* app, bool ack_req, bool outboun
 					if (app_opcode != OP_SpecialMesg &&
 						(!RuleB(EventLog, SkipCommonPacketLogging) ||
 							(RuleB(EventLog, SkipCommonPacketLogging) && app_opcode != OP_MobHealth && app_opcode != OP_MobUpdate && app_opcode != OP_ClientUpdate))) {
-						LogPacketServerClient("[{}] - [{:#06x}] Size: [{}] {}", OpcodeManager::EmuToName(app_opcode), app->opcode, app->size, DumpProtocolPacketToString(app).c_str());
+						LogPacketServerClient("[{}] - [{:#06x}] Size: [{}] [payload redacted]", OpcodeManager::EmuToName(app_opcode), app->opcode, app->size);
 					}
 				}
 			}

@@ -490,7 +490,7 @@ ClientListEntry* ClientList::CheckAuth(const char* iName, const char* iPassword)
 	int16 tmpadmin;
 	int8 tmprevoked = false;
 
-	LogDebug("Login with {} and {}", iName, iPassword);
+	LogDebug("Login for {} [authentication material redacted]", iName);
 
 	uint32 accid = database.CheckLogin(iName, iPassword, &tmpadmin, &tmprevoked);
 	if (accid) {

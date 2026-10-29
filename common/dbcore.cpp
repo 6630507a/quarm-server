@@ -109,19 +109,19 @@ MySQLRequestResult DBcore::QueryDatabase(const char* query, uint32 querylen, boo
 
 			auto errorBuffer = new char[MYSQL_ERRMSG_SIZE];
 
-			snprintf(errorBuffer, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(&mysql), mysql_error(&mysql));
+			snprintf(errorBuffer, MYSQL_ERRMSG_SIZE, "#%i: database operation failed; query values redacted", mysql_errno(&mysql));
 
 			return MySQLRequestResult(nullptr, 0, 0, 0, 0, (uint32)mysql_errno(&mysql), errorBuffer);
 		}
 
 		auto errorBuffer = new char[MYSQL_ERRMSG_SIZE];
-		snprintf(errorBuffer, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(&mysql), mysql_error(&mysql));
+		snprintf(errorBuffer, MYSQL_ERRMSG_SIZE, "#%i: database operation failed; query values redacted", mysql_errno(&mysql));
 
 		/**
 		 * Error logging
 		 */
 		if (mysql_errno(&mysql) > 0 && query[0] != '\0'){
-			LogMySQLError("MySQL Error ({}) [{}] Query [{}]", mysql_errno(&mysql), mysql_error(&mysql), query);
+			LogMySQLError("MySQL Error ({}) [query values redacted]", mysql_errno(&mysql));
 		}
 
 		return MySQLRequestResult(nullptr, 0, 0, 0, 0, mysql_errno(&mysql),errorBuffer);
@@ -147,7 +147,7 @@ MySQLRequestResult DBcore::QueryDatabase(const char* query, uint32 querylen, boo
 	if (LogSys.log_settings[Logs::MySQLQuery].is_category_enabled == 1) {
 		LogMySQLQuery(
 			"{0} -- ({1} row{2} returned) ({3}s)",
-			query,
+			"[query values redacted]",
 			rowCount,
 			requestResult.RowCount(),
 			std::to_string(timer.elapsed())

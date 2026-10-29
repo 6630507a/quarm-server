@@ -226,7 +226,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 	strn0cpy(name, (char*)login_info->login_info,18);
 	strn0cpy(password, (char*)&(login_info->login_info[strlen(name)+1]), 15);
 
-	LogDebug("Receiving Login Info Packet from Client | name [{0}] password [{1}]", name, password);
+	LogDebug("Receiving Login Info Packet from Client | name [{0}] [authentication key redacted]", name);
 
 	if (strlen(password) <= 1) {
 		LogInfo("Login without a password");
@@ -843,7 +843,7 @@ bool Client::HandlePacket(const EQApplicationPacket *app) {
 		OpcodeManager::EmuToName(app->GetOpcode()),
 		o->EmuToEQ(app->GetOpcode()) == 0 ? app->GetProtocolOpcode() : o->EmuToEQ(app->GetOpcode()),
 		app->Size(),
-		(LogSys.IsLogEnabled(Logs::Detail, Logs::PacketClientServer) ? DumpPacketToString(app) : "")
+		"[packet payload redacted]"
 	);
 
 	if (!eqs || !eqs->CheckState(ESTABLISHED)) {
